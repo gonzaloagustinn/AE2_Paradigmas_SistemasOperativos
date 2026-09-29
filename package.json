@@ -1,0 +1,25 @@
+{
+  "name": "ae2_paradigmas_sistemasoperativos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos/issues"
+  },
+  "homepage": "https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos#readme",
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.2"
+  }
+}
