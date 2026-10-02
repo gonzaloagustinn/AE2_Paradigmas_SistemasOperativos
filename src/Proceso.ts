@@ -77,6 +77,12 @@ export class Proceso implements IProcesoConsulta, IProcesodeControl {
     }
 
 
+    ejecutarTick(): boolean {
+        const puedeEjecutar = this.estado === EstadodeProceso.Ejecutando && this.cpuRestante > 0;
+        this.cpuRestante = puedeEjecutar ? this.cpuRestante - 1 : this.cpuRestante;
+        this.quantumConsumido = puedeEjecutar ? this.quantumConsumido + 1 : this.quantumConsumido;
+        return puedeEjecutar;
+    }
 
     esValido(): boolean {
         const pidValido = this.pid > 0 && this.pid % 1 === 0;

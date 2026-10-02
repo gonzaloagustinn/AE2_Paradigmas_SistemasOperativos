@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest";
 import { Proceso } from "../src/Proceso";
 import { EstadodeProceso } from "../src/EstadodeProceso";
+import { IProcesoConsulta } from "../src/IProcesoConsulta"
 
 
 describe("Proceso", () => {
@@ -106,17 +107,33 @@ describe("estado inicial", () =>{
 
     })
 
-    test("un proceo recien creado tiene el quantum consumido en cero"), () => {
+    test("un proceso recien creado tiene el quantum consumido en cero", () => {
         const p = new Proceso (1, 200, 5)
 
         expect(p.getQuantumConsumido()).toBe(0)
-        
-    }
+    })
 
     test("un proceso recien creado no tiene bloqueo pendiente",  ()=> {
 
         const p = new Proceso (1, 200, 5)
 
         expect(p.getBloqueoRestante()).toBe(0)
+    })
+})
+
+describe(" ver solo lectura", () => {
+
+    test("un proceso se puede usar a traves de IProcesoConsulta", ()=>{
+
+        const consulta: IProcesoConsulta = new Proceso(1, 200, 5)
+
+        expect(consulta.getPid()).toBe(1)
+        expect(consulta.getEstado()).toBe(EstadodeProceso.Nuevo)
+        expect(consulta.getMemoriaRequerida()).toBe(200)
+        expect(consulta.getCpuRestante()).toBe(5)
+        expect(consulta.getCpuTotal()).toBe(5)
+        expect(consulta.getQuantumConsumido()).toBe(0)
+        expect(consulta.getBloqueoRestante()).toBe(0)
+
     })
 })

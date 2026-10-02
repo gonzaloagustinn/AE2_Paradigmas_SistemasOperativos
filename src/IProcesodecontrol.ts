@@ -6,6 +6,8 @@ export interface IProcesodeControl {
     despachar(): boolean;
     expulsar(): boolean;
     terminar(): boolean;
+
+    ejecutarTick(): boolean;
     
 
 }

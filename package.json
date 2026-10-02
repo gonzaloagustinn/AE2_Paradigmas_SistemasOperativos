@@ -8,17 +8,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fabriziograciosii/Simulador-sistemas-operativos-y-paradigmas.git"
+    "url": "git+https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/fabriziograciosii/Simulador-sistemas-operativos-y-paradigmas/issues"
+    "url": "https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos/issues"
   },
-  "homepage": "https://github.com/fabriziograciosii/Simulador-sistemas-operativos-y-paradigmas#readme",
+  "homepage": "https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos#readme",
   "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.2"
   }
