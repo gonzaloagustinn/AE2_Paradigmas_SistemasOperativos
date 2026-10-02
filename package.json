@@ -1,23 +1,23 @@
 {
-  "name": "ae2_paradigmas_sistemasoperativos",
+  "name": "simulador-sistemas-operativos-y-paradigmas",
   "version": "1.0.0",
-  "description": "",
+  "description": "<!-- Requerimientos funcionales Cada requerimiento debe poder verificarse mediante pruebas con datos de entrada y resultados esperados explícitos. Los identificadores RF permiten relacionar consigna, código y evidencias.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos.git"
+    "url": "git+https://github.com/fabriziograciosii/Simulador-sistemas-operativos-y-paradigmas.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos/issues"
+    "url": "https://github.com/fabriziograciosii/Simulador-sistemas-operativos-y-paradigmas/issues"
   },
-  "homepage": "https://github.com/gonzaloagustinn/AE2_Paradigmas_SistemasOperativos#readme",
+  "homepage": "https://github.com/fabriziograciosii/Simulador-sistemas-operativos-y-paradigmas#readme",
   "devDependencies": {
     "typescript": "^7.0.2",
     "vitest": "^5.0.2"
