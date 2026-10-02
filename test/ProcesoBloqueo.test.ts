@@ -82,7 +82,56 @@ describe("bloqueo por entrada/salida", () => {
 
     describe("retorno del bloqueo", () => {
         test("el temporizador baja de a uno y el proceso sigue Bloqueado hasta llegar a cero", () => {
+            
+            const p = new Proceso(1, 200, 5, new EventoES(2,3 ))
+
+            p.admitir()
+            p.despachar()
+            p.ejecutarTick()
+            p.ejecutarTick()
+            p.bloquear()
+
+            expect(p.avanzarBloqueo()).toBe(false)
+            expect(p.getBloqueoRestante()).toBe(2)
+            expect(p.avanzarBloqueo()).toBe(false)
+            expect(p.getBloqueoRestante()).toBe(1)
+            expect(p.getEstado()).toBe(EstadodeProceso.Bloqueado)
 
         })
     })
+
+    test("al llegar el temporizador a cero el proceso vuelve a Listo", () => {
+        const p = new Proceso(1, 200, 5, new EventoES(2, 3))
+
+        p.admitir()
+        p.despachar()
+        p.ejecutarTick()
+        p.ejecutarTick()
+        p.bloquear()
+        p.avanzarBloqueo()
+        p.avanzarBloqueo()
+
+        expect(p.avanzarBloqueo()).toBe(true)
+        expect(p.getBloqueoRestante()).toBe(0)
+        expect(p.getEstado()).toBe(EstadodeProceso.Listo)
+    })
+
+    test(" el evento se dispara una sola vez", () =>{
+        const p = new Proceso(1, 200, 5, new EventoES(2, 1))
+
+        p.admitir()
+        p.despachar()
+        p.ejecutarTick()
+        p.ejecutarTick()
+        p.bloquear()
+        p.avanzarBloqueo()
+        p.despachar()
+        p.ejecutarTick()
+
+        expect(p.bloquear()).toBe(false)
+        expect(p.getEstado()).toBe(EstadodeProceso.Ejecutando)
+
+    })
+
+    
 })
