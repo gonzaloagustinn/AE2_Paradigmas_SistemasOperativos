@@ -5,5 +5,4 @@ export enum EstadodeProceso {
     Ejecutando = "Ejecutando",
     Bloqueado = "Bloqueado",
     Terminado = "Terminado",
-
 }

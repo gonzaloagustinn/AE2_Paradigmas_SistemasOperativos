@@ -6,7 +6,7 @@ describe("EventoES", () => {
 
         const evento = new EventoES(2,3)
 
-        expect(evento.getTicksCpuparadisparo()).toBe(2)
+        expect(evento.getTicksCpuParaDisparo()).toBe(2)
         expect(evento.getDuracion()).toBe(3)
     })
 
@@ -45,15 +45,19 @@ describe("EventoES", () => {
         expect(new EventoES(2, 0).esValido()).toBe(false);
     });
 
+
     test("una duración negativa no es valido", () => {
+    
         expect(new EventoES(2, -4).esValido()).toBe(false);
     });
 
     test("una duración decimal no es valido", () => {
+    
         expect(new EventoES(2, 0.5).esValido()).toBe(false);
     });
 
     test("Una duración no numerico no es valido", () => {
+    
         expect(new EventoES(2, NaN).esValido()).toBe(false);
     });
 

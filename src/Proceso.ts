@@ -1,6 +1,7 @@
 import { EstadodeProceso } from "./EstadodeProceso";
 import type { IProcesoConsulta } from "./IProcesoConsulta";
 import { IProcesodeControl } from "./IProcesodecontrol";
+import { EventoES } from "./EventoES";
 
 export class Proceso implements IProcesoConsulta, IProcesodeControl {
     private readonly pid: number;
@@ -10,10 +11,11 @@ export class Proceso implements IProcesoConsulta, IProcesodeControl {
     private quantumConsumido: number
     private bloqueoRestante: number
     private estado: EstadodeProceso
+    private evento: EventoES | undefined
     
 
 
-    constructor(pid: number, memoriaRequerida: number, cpuTotal: number) {
+        constructor(pid: number, memoriaRequerida: number, cpuTotal: number, evento?: EventoES)  {
         this.pid = pid;
         this.memoriaRequerida = memoriaRequerida;
         this.cpuTotal = cpuTotal;
@@ -21,6 +23,7 @@ export class Proceso implements IProcesoConsulta, IProcesodeControl {
         this.quantumConsumido = 0;
         this.bloqueoRestante = 0
         this.estado = EstadodeProceso.Nuevo;
+        this.evento = evento;
 
     }
 
@@ -84,13 +87,32 @@ export class Proceso implements IProcesoConsulta, IProcesodeControl {
         return puedeEjecutar;
     }
 
+        bloquear(): boolean {
+        const ticksConsumidos = this.cpuTotal - this.cpuRestante;
+        const ticksDeDisparo = this.evento?.getTicksCpuParaDisparo();
+        const seDispara = ticksConsumidos === ticksDeDisparo && this.cpuRestante > 0;
+        const duracion = this.evento?.getDuracion() ?? 0;
+        const bloqueado = seDispara && this.transicionarA(EstadodeProceso.Bloqueado, [EstadodeProceso.Ejecutando]);
+
+        this.bloqueoRestante = bloqueado ? duracion : this.bloqueoRestante;
+        this.evento = bloqueado ? undefined : this.evento;
+        return bloqueado;
+    }
+
+    avanzarBloqueo(): boolean {
+        const estaBloqueado = this.estado === EstadodeProceso.Bloqueado;
+
+        this.bloqueoRestante = estaBloqueado ? this.bloqueoRestante - 1 : this.bloqueoRestante;
+        return estaBloqueado && this.bloqueoRestante === 0 && this.transicionarA(EstadodeProceso.Listo, [EstadodeProceso.Bloqueado]);
+    }
+
     esValido(): boolean {
         const pidValido = this.pid > 0 && this.pid % 1 === 0;
         const memoriaValida = this.memoriaRequerida > 0 && this.memoriaRequerida % 1 === 0;
         const cpuValido = this.cpuTotal > 0 && this.cpuTotal % 1 === 0;
+        const eventoValido = this.evento === undefined || this.evento.esValido();
 
-        return pidValido && memoriaValida && cpuValido;
-        
+        return pidValido && memoriaValida && cpuValido && eventoValido;
     }
 
         private transicionarA(destino: EstadodeProceso, origenesPermitidos: EstadodeProceso[]): boolean {
