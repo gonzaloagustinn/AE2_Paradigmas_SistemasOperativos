@@ -1,12 +1,24 @@
+import { EstadodeProceso } from "./EstadodeProceso";
+
 export class Proceso {
     private readonly pid: number;
     private readonly memoriaRequerida: number;
     private readonly cpuTotal: number;
+    private cpuRestante: number
+    private quantumConsumido: number
+    private bloqueoRestante: number
+    private estado: EstadodeProceso
+
 
     constructor(pid: number, memoriaRequerida: number, cpuTotal: number) {
         this.pid = pid;
         this.memoriaRequerida = memoriaRequerida;
         this.cpuTotal = cpuTotal;
+        this.cpuRestante = cpuTotal
+        this.quantumConsumido = 0;
+        this.bloqueoRestante = 0
+        this.estado = EstadodeProceso.Nuevo;
+
     }
 
     getPid(): number {
@@ -19,6 +31,25 @@ export class Proceso {
 
     getCpuTotal(): number {
         return this.cpuTotal;
+    }
+
+    getEstado(): EstadodeProceso {
+        return this.estado
+    }
+
+
+    getCpuRestante(): number {
+        return this.cpuRestante
+
+    }
+
+    getQuantumConsumido(): number {
+        return this.quantumConsumido
+    }
+
+
+    getBloqueoRestante(): number {
+        return this.bloqueoRestante
     }
 
     esValido(): boolean {
