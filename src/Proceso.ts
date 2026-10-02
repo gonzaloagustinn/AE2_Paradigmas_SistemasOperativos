@@ -1,6 +1,8 @@
 import { EstadodeProceso } from "./EstadodeProceso";
+import type { IProcesoConsulta } from "./IProcesoConsulta";
+import { IProcesodeControl } from "./IProcesodecontrol";
 
-export class Proceso {
+export class Proceso implements IProcesoConsulta, IProcesodeControl {
     private readonly pid: number;
     private readonly memoriaRequerida: number;
     private readonly cpuTotal: number;
@@ -8,6 +10,7 @@ export class Proceso {
     private quantumConsumido: number
     private bloqueoRestante: number
     private estado: EstadodeProceso
+    
 
 
     constructor(pid: number, memoriaRequerida: number, cpuTotal: number) {
@@ -52,11 +55,44 @@ export class Proceso {
         return this.bloqueoRestante
     }
 
+    admitir(): boolean {
+        return this.transicionarA(EstadodeProceso.Listo, [EstadodeProceso.Nuevo, EstadodeProceso.Esperando_Memoria]);
+
+    }
+
+       esperarMemoria(): boolean {
+        return this.transicionarA(EstadodeProceso.Esperando_Memoria, [EstadodeProceso.Nuevo]);
+    }
+
+    despachar(): boolean {
+        return this.transicionarA(EstadodeProceso.Ejecutando, [EstadodeProceso.Listo]);
+    }
+
+    expulsar(): boolean {
+        return this.transicionarA(EstadodeProceso.Listo, [EstadodeProceso.Ejecutando]);
+    }
+
+    terminar(): boolean {
+        return this.transicionarA(EstadodeProceso.Terminado, [EstadodeProceso.Ejecutando]);
+    }
+
+
+
     esValido(): boolean {
         const pidValido = this.pid > 0 && this.pid % 1 === 0;
         const memoriaValida = this.memoriaRequerida > 0 && this.memoriaRequerida % 1 === 0;
         const cpuValido = this.cpuTotal > 0 && this.cpuTotal % 1 === 0;
 
         return pidValido && memoriaValida && cpuValido;
+        
     }
+
+        private transicionarA(destino: EstadodeProceso, origenesPermitidos: EstadodeProceso[]): boolean {
+        const permitido = origenesPermitidos.includes(this.estado);
+        this.estado = permitido ? destino : this.estado;
+        return permitido;
+    }
+
+
+    
 }
