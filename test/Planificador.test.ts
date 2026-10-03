@@ -62,3 +62,27 @@ describe("cola FIFO de listos", () => {
 
     })
 })
+
+describe(" despachar", () => {
+    test("despacha el primero de la cola y lo deja ejecutando", () => {
+
+        const planificador = new Planificador(2)
+        planificador.encolar(procesoListo(1))
+
+        planificador.encolar(procesoListo(2))
+        planificador.despachar()
+
+        expect(planificador.despachar()).toBe(false)
+        expect(planificador.getEjecutando()?.getPid()).toBe(1)
+
+    })
+
+    test("un proceso de Cpu no puede cencolarse de nuevo", () => {
+        const planificador = new Planificador(2)
+        const p = procesoListo(1)
+        planificador.encolar(p)
+        planificador.despachar()
+
+        expect(planificador.encolar(p)).toBe(false)
+    })
+})

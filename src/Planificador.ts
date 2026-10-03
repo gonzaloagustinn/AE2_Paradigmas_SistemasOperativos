@@ -35,9 +35,25 @@ export class Planificador implements IConsultadePlanificador {
     encolar(proceso: Proceso): boolean {
 
         const esListo = proceso.getEstado() === EstadodeProceso.Listo
+
         const repetido = this.cola.includes(proceso) || this.ejecutando ===proceso 
         const aceptado = esListo && !repetido 
+
+
         this.cola = aceptado ? [...this.cola, proceso] : this.cola 
         return aceptado  
+    }
+
+    despachar(): boolean {
+        const siguiente = this.cola[0]
+
+        const puede = siguiente !== undefined && this.ejecutando === undefined
+        const despachado = puede && siguiente.despachar()
+        this.cola = despachado ? this.cola.slice(1) : this.cola
+
+        
+        this.ejecutando = despachado ? siguiente : this.ejecutando
+        return despachado
+
     }
 }
