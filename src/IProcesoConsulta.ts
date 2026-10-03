@@ -10,4 +10,5 @@ export interface IProcesoConsulta {
     getBloqueoRestante(): number;
     bloquear(): boolean;
     avanzarBloqueo(): boolean;
+   
 }
