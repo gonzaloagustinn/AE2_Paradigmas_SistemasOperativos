@@ -68,7 +68,10 @@ export class Proceso implements IProcesoConsulta, IProcesodeControl {
     }
 
     despachar(): boolean {
-        return this.transicionarA(EstadodeProceso.Ejecutando, [EstadodeProceso.Listo]);
+        
+        const despachado = this.transicionarA(EstadodeProceso.Ejecutando, [EstadodeProceso.Listo])
+        this.quantumConsumido = despachado ? 0 : this.quantumConsumido
+        return despachado
     }
 
     expulsar(): boolean {
