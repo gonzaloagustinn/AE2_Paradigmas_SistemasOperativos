@@ -51,9 +51,23 @@ export class Planificador implements IConsultadePlanificador {
         const despachado = puede && siguiente.despachar()
         this.cola = despachado ? this.cola.slice(1) : this.cola
 
-        
+
         this.ejecutando = despachado ? siguiente : this.ejecutando
         return despachado
 
     }
+
+    ejecutarTick(): Proceso | undefined {
+        const actual = this.ejecutando
+        return actual === undefined ? undefined : this.consumir(actual)
+
+    }
+
+    private consumir(proceso: Proceso): Proceso | undefined {
+        const corrio = proceso.ejecutarTick()
+        return corrio ? proceso : undefined
+    }
+
+
+    
 }

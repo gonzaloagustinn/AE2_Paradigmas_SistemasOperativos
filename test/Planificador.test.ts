@@ -86,3 +86,32 @@ describe(" despachar", () => {
         expect(planificador.encolar(p)).toBe(false)
     })
 })
+
+function procesoconCpu(pid:number, cpu: number): Proceso {
+
+    const p = new Proceso(pid, 100, cpu)
+
+    p.admitir()
+    
+    return p
+}
+
+describe("ejecutar un tick", () => {
+    test("sin proceso en Cpu no se ejecuta nada", () => {
+
+        expect(new Planificador(2). ejecutarTick()).toBe(undefined)
+    })
+
+    test("consume una unidad de cpu del proceso en ejecucion", () => {
+
+        const planificador = new Planificador(5)
+        planificador.encolar(procesoconCpu(1, 3))
+        planificador.despachar()
+
+        const corrio = planificador.ejecutarTick()
+
+        expect(corrio?.getPid()).toBe(1)
+        expect(corrio?.getCpuRestante()).toBe(2)
+        expect(corrio?.getQuantumConsumido()).toBe(1)
+    })
+})
