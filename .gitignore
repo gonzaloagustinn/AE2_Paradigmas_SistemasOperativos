@@ -1,14 +1,14 @@
-# Dependencias
+
 node_modules/
 
-# Archivos de producción / compilación
+
 dist/
 build/
 
-# Variables de entorno y secretos
+
 .env
 .env.local
 
-# Logs
+
 *.log
 npm-debug.log*

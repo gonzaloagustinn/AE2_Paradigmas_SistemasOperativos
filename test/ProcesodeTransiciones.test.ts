@@ -1,7 +1,6 @@
 import {describe, test, expect} from "vitest"
 import { Proceso } from "../src/Proceso" 
 import { EstadodeProceso } from "../src/EstadodeProceso"
-import type { IProcesoConsulta } from "../src/IProcesoConsulta"
 import type { IProcesodeControl} from "../src/IProcesodecontrol"
 
 describe("transiciones validas", () => {

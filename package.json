@@ -1,10 +1,13 @@
 {
   "name": "simulador-sistemas-operativos-y-paradigmas",
   "version": "1.0.0",
-  "description": "<!-- Requerimientos funcionales Cada requerimiento debe poder verificarse mediante pruebas con datos de entrada y resultados esperados explícitos. Los identificadores RF permiten relacionar consigna, código y evidencias.",
+  "description": "Simulador de procesos y memoria (AE2 - Sistemas Operativos y Paradigmas II)",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",

@@ -8,4 +8,6 @@ export interface IProcesoConsulta {
     getCpuRestante(): number;
     getQuantumConsumido(): number;
     getBloqueoRestante(): number;
+    bloquear(): boolean;
+    avanzarBloqueo(): boolean;
 }
