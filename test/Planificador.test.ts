@@ -224,8 +224,47 @@ describe(" bloqueo por entrada / salida", () => {
 
         expect(p.getEstado()).toBe(EstadodeProceso.Terminado)
         expect(planificador.getcambiosdecontexto()).toBe(0)
-        
+
     })
 })
 
+describe("quantum con otros listos", () => {
+    test("al agotar el quantum con otros listos, el proceso va al final de la cola", () => {
+        
+        const planificador = new Planificador(2)
+        
+        const p1 = procesoconCpu(1, 3)
 
+
+        planificador.encolar(p1)
+        planificador.encolar(procesoconCpu(2, 2))
+        planificador.despachar()
+
+        planificador.ejecutarTick()
+        expect(planificador.getEjecutando()?.getPid()).toBe(1)
+
+        planificador.ejecutarTick()
+        expect(p1.getEstado()).toBe(EstadodeProceso.Listo)
+        
+        expect(planificador.getEjecutando()).toBe(undefined)
+        expect(planificador.getColaListos()[0].getPid()).toBe(2)
+        expect(planificador.getColaListos()[1].getPid()).toBe(1)
+        expect(planificador.getcambiosdecontexto()).toBe(1)
+
+    })
+
+    test("finalizar justo en el limite de quantum no lo reencola ni cuenta contexto", () => {
+        const planificador = new Planificador (2)
+
+        planificador.encolar(procesoconCpu(1,2))
+        planificador.encolar(procesoconCpu(2,2))
+        planificador.despachar()
+
+        planificador.ejecutarTick()
+        planificador.ejecutarTick()
+
+        expect(planificador.getColaListos().length).toBe(1)
+        expect(planificador.getColaListos()[0].getPid()).toBe(2)
+        expect(planificador.getcambiosdecontexto()).toBe(0)
+    })
+})

@@ -74,8 +74,12 @@ export class Planificador implements IConsultadePlanificador {
         const corrio = proceso.ejecutarTick()
         const termino = corrio && proceso.getCpuRestante() === 0 && proceso.terminar()
         const bloqueado = corrio && !termino && proceso.bloquear()
-        this.ejecutando = termino || bloqueado ? undefined : this.ejecutando
-        this.cambiosdeContexto = this.cambiosdeContexto + (bloqueado ? 1 : 0)
+        const agotado = corrio && !termino && !bloqueado && proceso.getQuantumConsumido() === this.quantum
+        const hayOtros = this.cola.length > 0
+        const expulsado = agotado && hayOtros && proceso.expulsar()
+        this.cola = expulsado ? [...this.cola, proceso] : this.cola
+        this.ejecutando = termino || bloqueado || expulsado ? undefined : this.ejecutando
+        this.cambiosdeContexto = this.cambiosdeContexto + (bloqueado || expulsado ? 1 : 0)
         return corrio ? proceso : undefined
     }
 
