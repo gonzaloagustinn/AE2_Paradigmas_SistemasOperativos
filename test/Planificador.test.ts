@@ -3,6 +3,7 @@ import { Planificador } from "../src/Planificador"
 import { Proceso } from "../src/Proceso"
 import type { IConsultadePlanificador } from "../src/IConsultadePlanificador"
 import { EstadodeProceso } from "../src/EstadodeProceso"
+import { EventoES } from "../src/EventoES"
 
 function procesoListo(pid: number) : Proceso {
 
@@ -173,3 +174,58 @@ describe("finalizacion del proceso al agotar cpu y liberar"), () => {
     
 
 }
+
+describe(" bloqueo por entrada / salida", () => {
+
+    test("al dispararse el evento el proceso queda bloqueado y libera la Cpu", () => {
+        const planificador = new Planificador(5)
+        const p = new Proceso(1, 100, 3, new EventoES(1, 2))
+
+        p.admitir()
+        planificador.encolar(p)
+        planificador.despachar()
+
+        planificador.ejecutarTick()
+
+        expect(p.getEstado()).toBe(EstadodeProceso.Bloqueado)
+        expect(p.getBloqueoRestante()).toBe(2)
+        expect(planificador.getEjecutando()).toBe(undefined)
+        expect(planificador.getColaListos().length).toBe(0)
+        expect(planificador.getcambiosdecontexto()).toBe(1)
+
+    })
+
+    test("el bloqueo tiene prioridad sobre el quantum", () => {
+        const planificador = new Planificador(1)
+        const p = new Proceso(1, 100, 3, new EventoES(1, 2))
+
+        p.admitir()
+        planificador.encolar(p)
+        planificador.encolar(procesoconCpu(2, 2))
+        planificador.despachar()
+
+        planificador.ejecutarTick()
+
+        expect(p.getEstado()).toBe(EstadodeProceso.Bloqueado)
+        expect(planificador.getColaListos().length).toBe(1)
+        expect(planificador.getcambiosdecontexto()).toBe(1)
+    })
+
+    test("si el proceso termina el tick del evento termina y no se bloquea", () =>{
+
+        const planificador = new Planificador(5)
+        const p = new Proceso(1, 100, 1, new EventoES(1,2))
+
+        p.admitir()
+        planificador.encolar(p)
+        planificador.despachar()
+
+        planificador.ejecutarTick()
+
+        expect(p.getEstado()).toBe(EstadodeProceso.Terminado)
+        expect(planificador.getcambiosdecontexto()).toBe(0)
+        
+    })
+})
+
+
