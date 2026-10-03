@@ -61,6 +61,13 @@ describe("cola FIFO de listos", () => {
         expect(planificador.getColaListos().length).toBe(1)
 
     })
+
+        test("rechaza un proceso que no esta Listo", () => {
+        const planificador = new Planificador(2)
+
+        expect(planificador.encolar(new Proceso(1, 100, 5))).toBe(false)
+        expect(planificador.getColaListos().length).toBe(0)
+    })
 })
 
 describe(" despachar", () => {
@@ -85,7 +92,22 @@ describe(" despachar", () => {
 
         expect(planificador.encolar(p)).toBe(false)
     })
+
+    test("sin procesos listos no despacha", () => {
+        expect(new Planificador(2).despachar()).toBe(false)
+    })
+
+    test("con la Cpu ocupada no despacha a otro", () => {
+        const planificador = new Planificador(2)
+        planificador.encolar(procesoListo(1))
+        planificador.encolar(procesoListo(2))
+        planificador.despachar()
+
+        expect(planificador.despachar()).toBe(false)
+        expect(planificador.getEjecutando()?.getPid()).toBe(1)
+    })
 })
+
 
 function procesoconCpu(pid:number, cpu: number): Proceso {
 
@@ -128,9 +150,8 @@ describe("finalizacion del proceso al agotar cpu y liberar"), () => {
 
         expect(planificador.getEjecutando()).toBe(undefined)
         expect(planificador.getColaListos().length).toBe(0)
+        })
         
-    })
-
     test("otro proceso no se despacha en el mismo tick de la finalizacion", () => {
 
         const planificador = new Planificador (5)
@@ -142,6 +163,13 @@ describe("finalizacion del proceso al agotar cpu y liberar"), () => {
         expect(planificador.getEjecutando()).toBe(undefined)
     expect(planificador.getColaListos()[0].getEstado()).toBe(EstadodeProceso.Listo)
 
+    
+        
+        
     })
+    
+    
+    
+    
 
 }

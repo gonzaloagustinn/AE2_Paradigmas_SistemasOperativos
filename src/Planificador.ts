@@ -8,11 +8,13 @@ export class Planificador implements IConsultadePlanificador {
     private readonly quantum: number
     private cola: Proceso[]
     private ejecutando: Proceso | undefined 
+    private cambiosdeContexto: number
 
     constructor(quantum: number) {
         this.quantum = quantum
         this.cola = []
         this.ejecutando = undefined
+        this.cambiosdeContexto = 0
 
     }
 
@@ -28,6 +30,11 @@ export class Planificador implements IConsultadePlanificador {
     getEjecutando(): IProcesoConsulta | undefined {
         return this.ejecutando
     }
+
+        getcambiosdecontexto(): number {
+        return this.cambiosdeContexto
+    }
+
     esValido(): boolean {
         return this.quantum > 0 && this.quantum % 1 === 0
     }
@@ -66,7 +73,9 @@ export class Planificador implements IConsultadePlanificador {
     private consumir(proceso: Proceso): Proceso | undefined {
         const corrio = proceso.ejecutarTick()
         const termino = corrio && proceso.getCpuRestante() === 0 && proceso.terminar()
-        this.ejecutando = termino ? undefined : this.ejecutando
+        const bloqueado = corrio && !termino && proceso.bloquear()
+        this.ejecutando = termino || bloqueado ? undefined : this.ejecutando
+        this.cambiosdeContexto = this.cambiosdeContexto + (bloqueado ? 1 : 0)
         return corrio ? proceso : undefined
     }
 
