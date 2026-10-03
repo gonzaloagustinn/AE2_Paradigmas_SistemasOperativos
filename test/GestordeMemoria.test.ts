@@ -105,3 +105,67 @@ describe("asignar", () => {
 
     })
 })
+
+describe("liberar", () => {
+
+    test("liberar un proceso deja su bloque libre", () => {
+
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+
+        gestor.asignar(1, 300)
+
+        expect(gestor.liberar(1)).toBe(true)
+
+        const bloques = gestor.getBloques()
+
+        expect(bloques.length).toBe(1)
+        expect(bloques[0].estaLibre()).toBe(true)
+        expect(bloques[0].getInicio()).toBe(0)
+        expect(bloques[0].getTamano()).toBe(1000)
+
+    })
+
+    test("liberar un proceso que no existe devuelve false", () => {
+
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+
+        expect(gestor.liberar(99)).toBe(false)
+
+        expect(gestor.getBloques().length).toBe(1)
+        expect(gestor.getBloques()[0].estaLibre()).toBe(true)
+
+    })
+
+    test("liberar un bloque permite volver a usar esa memoria", () => {
+
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+
+        gestor.asignar(1, 300)
+        gestor.liberar(1)
+
+        expect(gestor.asignar(2, 500)).toBe(true)
+
+        expect(gestor.getBloques()[0].getPidAsignado()).toBe(2)
+        expect(gestor.getBloques()[0].getTamano()).toBe(500)
+
+    })
+
+    test("liberar dos procesos contiguos fusiona los bloques libres", () => {
+
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+
+        gestor.asignar(1, 300)
+        gestor.asignar(2, 300)
+
+        gestor.liberar(1)
+        gestor.liberar(2)
+
+        const bloques = gestor.getBloques()
+
+        expect(bloques.length).toBe(1)
+        expect(bloques[0].estaLibre()).toBe(true)
+        expect(bloques[0].getInicio()).toBe(0)
+        expect(bloques[0].getTamano()).toBe(1000)
+
+    })
+})
