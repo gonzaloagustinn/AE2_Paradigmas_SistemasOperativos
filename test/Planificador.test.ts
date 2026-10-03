@@ -2,7 +2,7 @@ import { describe, test, expect } from "vitest"
 import { Planificador } from "../src/Planificador"
 import { Proceso } from "../src/Proceso"
 import type { IConsultadePlanificador } from "../src/IConsultadePlanificador"
-
+import { EstadodeProceso } from "../src/EstadodeProceso"
 
 function procesoListo(pid: number) : Proceso {
 
@@ -115,3 +115,33 @@ describe("ejecutar un tick", () => {
         expect(corrio?.getQuantumConsumido()).toBe(1)
     })
 })
+
+describe("finalizacion del proceso al agotar cpu y liberar"), () => {
+    test("al llegar la Cpu a cero el proceso termina y libera la Cpu", () => {
+        const planificador = new Planificador(5)
+        planificador.encolar(procesoconCpu(1, 1))
+        planificador.despachar()
+
+        const corrio = planificador.ejecutarTick()
+
+        expect(corrio?.getEstado()).toBe(EstadodeProceso.Terminado)
+
+        expect(planificador.getEjecutando()).toBe(undefined)
+        expect(planificador.getColaListos().length).toBe(0)
+        
+    })
+
+    test("otro proceso no se despacha en el mismo tick de la finalizacion", () => {
+
+        const planificador = new Planificador (5)
+        planificador.encolar(procesoconCpu(1, 1))
+
+        planificador.encolar(procesoconCpu(2,2))
+        planificador.despachar()
+
+        expect(planificador.getEjecutando()).toBe(undefined)
+    expect(planificador.getColaListos()[0].getEstado()).toBe(EstadodeProceso.Listo)
+
+    })
+
+}

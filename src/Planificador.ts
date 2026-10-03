@@ -65,9 +65,11 @@ export class Planificador implements IConsultadePlanificador {
 
     private consumir(proceso: Proceso): Proceso | undefined {
         const corrio = proceso.ejecutarTick()
+        const termino = corrio && proceso.getCpuRestante() === 0 && proceso.terminar()
+        this.ejecutando = termino ? undefined : this.ejecutando
         return corrio ? proceso : undefined
     }
 
 
-    
+
 }
