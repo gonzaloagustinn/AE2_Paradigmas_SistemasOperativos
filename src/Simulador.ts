@@ -52,6 +52,7 @@ export class Simulador implements IConsultaSimulador {
     avanzarTick(): number {
 
         this.admitirPendientes()
+        this.ejecutarCpu()
         this.tick = this.tick + (this.esValido() ? 1:0)
 
         return this.tick
@@ -75,6 +76,12 @@ export class Simulador implements IConsultaSimulador {
         const espera = pendiente && !asignado && proceso.esperarMemoria()
         return admitido || espera
 
-        
+
+    }
+
+    private ejecutarCpu(): void {
+        this.planificador.despachar()
+
+        this.planificador.ejecutarTick()
     }
 }

@@ -208,3 +208,56 @@ describe("admision y asignacion de memoria", () => {
 
     })
 })
+
+describe(" round robin con quantum 2", () => {
+    test("p1 - cpu 3 y p2 - cpu 2 se ejecutan p1, 1, 2, 2, 1", () =>{
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        simulador.registrar(1, 100, 3)
+        simulador.registrar(2, 100, 2)
+
+        const p1 = simulador.getProcesos()[0]
+        const p2 = simulador.getProcesos()[1]
+
+        simulador.avanzarTick()
+
+        expect([p1.getCpuRestante(), p2.getCpuRestante()]).toEqual([2, 2])
+
+        simulador.avanzarTick()
+        expect([p1.getCpuRestante(), p2.getCpuRestante()]).toEqual([1, 2])
+
+        simulador.avanzarTick()
+        expect([p1.getCpuRestante(), p2.getCpuRestante()]).toEqual([1, 1])
+
+
+        simulador.avanzarTick()
+        expect([p1.getCpuRestante(), p2.getCpuRestante()]).toEqual([1, 0])
+
+
+        simulador.avanzarTick()
+        expect([p1.getCpuRestante(), p2.getCpuRestante()]).toEqual([0, 0])
+
+
+
+
+        
+    })
+
+
+    test("un unico proceso se ejecuta sin interrupciones hasta terminar", () => {
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        simulador.registrar(1, 100, 3)
+
+        const p1 = simulador.getProcesos()[0]
+
+
+        simulador.avanzarTick()
+        simulador.avanzarTick()
+        simulador.avanzarTick()
+
+        expect(p1.getCpuRestante()).toBe(0)
+        expect(p1.getEstado()).toBe(EstadodeProceso.Terminado)
+
+    })
+})
