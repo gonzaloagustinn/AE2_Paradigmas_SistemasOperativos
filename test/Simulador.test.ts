@@ -1,7 +1,12 @@
 import { test, describe, expect } from "vitest"
 import { Simulador } from "../src/Simulador"
 import { FirstFit } from "../src/FirstFit"
+
 import type { IConsultaSimulador } from "../src/IConsultaSimulador"
+import { EstadodeProceso } from "../src/EstadodeProceso"
+import { EventoES } from "../src/EventoES"
+
+
 
 describe("configuracion y estado inicial", () => {
     test("la confguracion de referencia que es 1024kb con un quantum 2", () => {
@@ -51,4 +56,20 @@ describe("configuracion y estado inicial", () => {
     })
 
 
+})
+
+
+describe(" registro de procesos", () => {
+    test("registra un proceso valido en estado Nuevo", () => {
+
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        expect(simulador.registrar(1, 200, 5)).toBe(true)
+
+        const procesos = simulador.getProcesos()
+        expect( procesos.length).toBe(1)
+        expect(procesos[0].getPid()).toBe(1)
+        expect(procesos[0].getEstado()).toBe(EstadodeProceso.Nuevo)
+        
+    })
 })
