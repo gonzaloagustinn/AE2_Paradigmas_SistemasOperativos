@@ -52,8 +52,9 @@ export class Simulador implements IConsultaSimulador {
     avanzarTick(): number {
 
         this.admitirPendientes()
-        this.ejecutarCpu()
         this.actualizarbloqueados()
+        this.ejecutarCpu()
+        
         this.tick = this.tick + (this.esValido() ? 1:0)
 
         return this.tick
@@ -102,7 +103,6 @@ export class Simulador implements IConsultaSimulador {
 
      private reencolarsivolvio(proceso: Proceso): boolean{
         return proceso.avanzarBloqueo() && this.planificador.encolar(proceso)
-        
      }
     
 }

@@ -118,6 +118,30 @@ export class GestordeMemoria implements IConsultaMemoria, IGestordeMemoria {
         return resultado
     }
 
+    getMemorialibretotal(): number {
+        let total = 0
+        for (const bloque of this.bloques) {
+            total = total + (bloque.estaLibre() ? bloque.getTamano() : 0)
+        }
+
+        return total 
+    }
+
+    getMemoriaocupada(): number {
+        return this.memoriaTotal - this.getMemorialibretotal()
+    }
+
+        getMayorbloquelibres(): number {
+        let mayor = 0
+        for (const bloque of this.bloques) {
+            mayor = bloque.estaLibre() && bloque.getTamano() > mayor ? bloque.getTamano() : mayor
+        }
+        return mayor
+    }
+
+    
+
+
     esValido(): boolean {
         return this.memoriaTotal > 0 && this.memoriaTotal % 1 === 0
     }

@@ -4,5 +4,11 @@ export interface IConsultaMemoria {
 
     getMemoriaTotal(): number
     getBloques(): ReadonlyArray<BloquedeMemoria>
+
+    getMemoriaocupada(): number
+
+    getMemorialibretotal(): number
+
+    getMayorbloquelibres(): number
     
 }

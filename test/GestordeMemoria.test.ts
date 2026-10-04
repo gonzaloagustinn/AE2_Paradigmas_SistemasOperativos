@@ -240,3 +240,57 @@ describe("coalescencia", () => {
         expect(bloques[1].getTamano()).toBe(200)
     })
 })
+
+
+describe("cantidades de memoria", () => {
+    test("con la memoria vacia todo esta libre y el mayor bloque es el total", () => {
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+
+        expect(gestor.getMemoriaocupada()).toBe(0)
+
+        expect(gestor.getMemorialibretotal()).toBe(1000)
+
+        expect(gestor.getMayorbloquelibres()).toBe(1000)
+    })
+
+    test("con la memoria llena no hay libre y el mayor bloque libre es igual a 0", () => {
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+        gestor.asignar(1, 1000)
+
+        expect(gestor.getMemoriaocupada()).toBe(1000)
+
+        expect(gestor.getMemorialibretotal()).toBe(0)
+
+        expect(gestor.getMayorbloquelibres()).toBe(0)
+    
+    })
+
+        test("huecos no contiguos de 100 y 300, libre total 400 y mayor hueco 300", () => {
+        
+            const gestor = new GestordeMemoria(800, new FirstFit())
+        gestor.asignar(1, 100)
+
+        gestor.asignar(2, 100)
+
+
+        gestor.asignar(3, 300)
+        gestor.asignar(4, 300)
+
+
+        gestor.liberar(1)
+
+        gestor.liberar(3)
+
+        expect(gestor.getMemoriaocupada()).toBe(400)
+
+        expect(gestor.getMemorialibretotal()).toBe(400)
+
+        
+        expect(gestor.getMayorbloquelibres()).toBe(300)
+
+
+    })
+
+
+
+})
