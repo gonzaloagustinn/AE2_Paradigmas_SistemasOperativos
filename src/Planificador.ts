@@ -77,10 +77,16 @@ export class Planificador implements IConsultadePlanificador {
         const agotado = corrio && !termino && !bloqueado && proceso.getQuantumConsumido() === this.quantum
         const hayOtros = this.cola.length > 0
         const expulsado = agotado && hayOtros && proceso.expulsar()
+        this.renovarQuantum(proceso, agotado && !hayOtros)
         this.cola = expulsado ? [...this.cola, proceso] : this.cola
         this.ejecutando = termino || bloqueado || expulsado ? undefined : this.ejecutando
         this.cambiosdeContexto = this.cambiosdeContexto + (bloqueado || expulsado ? 1 : 0)
         return corrio ? proceso : undefined
+    }
+
+    private renovarQuantum (proceso: Proceso, corresponde: boolean): boolean {
+
+        return corresponde && proceso.expulsar() && proceso.despachar()
     }
 
 

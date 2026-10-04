@@ -245,7 +245,7 @@ describe("quantum con otros listos", () => {
 
         planificador.ejecutarTick()
         expect(p1.getEstado()).toBe(EstadodeProceso.Listo)
-        
+
         expect(planificador.getEjecutando()).toBe(undefined)
         expect(planificador.getColaListos()[0].getPid()).toBe(2)
         expect(planificador.getColaListos()[1].getPid()).toBe(1)
@@ -266,5 +266,25 @@ describe("quantum con otros listos", () => {
         expect(planificador.getColaListos().length).toBe(1)
         expect(planificador.getColaListos()[0].getPid()).toBe(2)
         expect(planificador.getcambiosdecontexto()).toBe(0)
+    })
+})
+
+
+describe("quantum si otros listos", () => {
+    test("un unico proceso renueva su quantum y sigue ejecutando sin cambio de contexto", () => {
+
+        const planificador = new Planificador(2)
+        const p = procesoconCpu(1,5)
+        planificador.encolar(p)
+        planificador.despachar()
+
+        planificador. ejecutarTick()
+        planificador.ejecutarTick()
+
+        expect(planificador.getEjecutando()?.getPid()).toBe(1)
+        expect(p.getEstado()).toBe(EstadodeProceso.Ejecutando)
+        expect(p.getQuantumConsumido()).toBe(0)
+        expect(planificador.getcambiosdecontexto()).toBe(0)
+        
     })
 })
