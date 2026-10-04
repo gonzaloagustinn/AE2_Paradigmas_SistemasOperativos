@@ -314,6 +314,59 @@ describe("liberar memoria al terminar ", () => {
 
         expect(simulador.getProcesos()[1].getCpuRestante()).toBe(2)
 
-        
+
     })
+})
+
+describe("bloqueo por entrada y salida", () =>{
+    test("bloquea, conserva memoria, no consume cpu y retorna al vencer el temporizador",() => {
+
+        const simulador = new Simulador(1024, 5, new FirstFit())
+        simulador.registrar(1, 100, 3, new EventoES(1, 2))
+
+        const p1 = simulador.getProcesos()[0]
+
+        simulador.avanzarTick()
+
+        expect(p1.getEstado()).toBe(EstadodeProceso.Bloqueado)
+
+        expect(p1.getCpuRestante()).toBe(2)
+
+        expect(p1.getBloqueoRestante()).toBe(2)
+
+        simulador.avanzarTick()
+        expect(p1.getEstado()).toBe(EstadodeProceso.Bloqueado)
+
+        expect(p1.getCpuRestante()).toBe(2)
+        expect(p1.getBloqueoRestante()).toBe(1)
+
+        expect(simulador.getMapadeMemoria()[0].getPidAsignado()).toBe(1)
+
+        simulador.avanzarTick()
+
+        expect(p1.getEstado()).toBe(EstadodeProceso.Ejecutando)
+        expect(p1.getCpuRestante()).toBe(1)
+
+
+
+
+    })
+
+    test("mientras un proceso esta bloqueado otro usa la cpu", ()=> {
+        const simulador = new Simulador(1024, 5, new FirstFit())
+
+        simulador.registrar(1, 100, 3, new EventoES(1, 3))
+        simulador.registrar(2, 100, 3)
+
+        const p2 = simulador.getProcesos()[1]
+
+        simulador.avanzarTick()
+        expect(p2.getCpuRestante()).toBe(3)
+
+        simulador.avanzarTick()
+
+        expect(p2.getCpuRestante()).toBe(2)
+    })
+
+
 })

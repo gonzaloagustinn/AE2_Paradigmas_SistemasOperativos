@@ -53,6 +53,7 @@ export class Simulador implements IConsultaSimulador {
 
         this.admitirPendientes()
         this.ejecutarCpu()
+        this.actualizarbloqueados()
         this.tick = this.tick + (this.esValido() ? 1:0)
 
         return this.tick
@@ -83,10 +84,26 @@ export class Simulador implements IConsultaSimulador {
     private ejecutarCpu(): void {
         this.planificador.despachar()
         const corrio = this.planificador.ejecutarTick()
-        this.liberarSiTermino(corrio)
+        this.liberarsiTermino(corrio)
     }
 
-    private liberarSiTermino(proceso: Proceso | undefined): boolean {
+    private liberarsiTermino(proceso: Proceso | undefined): boolean {
         return proceso !== undefined && proceso.getEstado() === EstadodeProceso.Terminado && this.gestor.liberar(proceso.getPid())
     }
+
+
+     private actualizarbloqueados(): void {
+
+        for (const proceso of this.procesos) {
+            this.reencolarsivolvio(proceso)
+        }
+
+     }
+
+     private reencolarsivolvio(proceso: Proceso): boolean{
+        return proceso.avanzarBloqueo() && this.planificador.encolar(proceso)
+        
+     }
+    
 }
+
