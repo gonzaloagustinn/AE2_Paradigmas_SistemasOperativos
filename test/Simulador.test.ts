@@ -459,3 +459,59 @@ describe("metricas", () =>{
 
 
 })
+
+describe("consulta del proceso en cpu y de los listos", () => {
+
+    test("al inicio no hay proceso en cpu ni listos", () =>{
+
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        expect(simulador.getProcesoEnCpu()).toBe(undefined)
+
+
+        expect(simulador.getListos().length).toBe(0)
+    })
+
+    test("informa el proceso en cpu y los listos en orden de cola", () =>{
+
+        const simulador = new Simulador(1024, 5, new FirstFit())
+
+        simulador.registrar(1, 100, 3)
+        simulador.registrar(2, 100, 3)
+        simulador.registrar(3, 100, 3)
+
+        simulador.avanzarTick()
+
+
+        expect(simulador.getProcesoEnCpu()?.getPid()).toBe(1)
+
+
+        expect(simulador.getListos().length).toBe(2)
+
+        expect(simulador.getListos()[0].getPid()).toBe(2)
+
+
+        expect(simulador.getListos()[1].getPid()).toBe(3)
+
+
+
+    })
+
+    test("tras el quantum el proceso expulsado va al final de los listos", () =>{
+
+        const simulador = new Simulador(1024, 1, new FirstFit())
+
+        simulador.registrar(1, 100, 3)
+
+        simulador.registrar(2, 100, 3)
+
+        simulador.avanzarTick()
+
+        expect(simulador.getProcesoEnCpu()).toBe(undefined)
+        
+        expect(simulador.getListos()[0].getPid()).toBe(2)
+
+
+        expect(simulador.getListos()[1].getPid()).toBe(1)
+    })
+})

@@ -68,9 +68,20 @@ export class Simulador implements IConsultaSimulador {
         return this.tick
     }
 
-        getMetricas(): IMetricas {
-        return this.metricas
+    getProcesoEnCpu(): IProcesoConsulta | undefined {
+        return this.planificador.getEjecutando()
     }
+
+    getListos(): ReadonlyArray<IProcesoConsulta> {
+        return this.planificador.getColaListos()
+         }
+
+
+
+
+        getMetricas(): IMetricas {
+        return this.metricas 
+         }
 
         private calcularMetricas(): Metricas {
         return new Metricas(
