@@ -48,6 +48,12 @@ export class Simulador implements IConsultaSimulador {
         return aceptado 
     }
 
+    avanzarTick(): number {
+        this.tick = this.tick + (this.esValido() ? 1:0)
+
+        return this.tick
+    }
+
     esValido(): boolean {
         return this.gestor.esValido() && this.planificador.esValido()
     }

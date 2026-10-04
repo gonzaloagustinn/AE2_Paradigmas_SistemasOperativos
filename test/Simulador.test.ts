@@ -130,3 +130,25 @@ describe(" registro de procesos", () => {
 
     })
 })
+
+
+describe("reloj",() => {
+    test("cada avance suma un tick", () => {
+
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        expect(simulador.avanzarTick()).toBe(1)
+        expect(simulador.getTick()).toBe(1)
+        expect(simulador.avanzarTick()).toBe(2)
+        expect(simulador.getTick()).toBe(2)
+
+    })
+
+    test("con una configuracion invalida le reloj no avanza", () =>{
+        const simulador = new Simulador(0, 2, new FirstFit())
+
+        expect(simulador.avanzarTick()).toBe(0)
+        expect(simulador.getTick()).toBe(0)
+
+    })
+})
