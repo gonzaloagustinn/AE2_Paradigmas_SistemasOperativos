@@ -370,3 +370,92 @@ describe("bloqueo por entrada y salida", () =>{
 
 
 })
+
+describe("metricas", () =>{
+    test (" en el tick 0 las metricas son las del estado inicial", () => {
+        const metricas = new Simulador(1024, 2, new FirstFit()).getMetricas()
+        expect(metricas.getOcupacionMemoria()).toBe(0)
+
+        expect(metricas.getUtilizacionCpu()).toBe(0)
+
+        expect(metricas.getCambiosdeContexto()).toBe(0)
+
+        expect(metricas.getMemoriaLibreTotal()).toBe(1024)
+        expect(metricas.getMayorbloqueLibre()).toBe(1024)
+        expect(metricas.getFragmentacionexterna()).toBe(0)
+
+
+    })
+
+
+    test("se recalculan al finalizar cada tick", () =>{
+        const simulador = new Simulador(1000, 5, new FirstFit())
+        simulador.registrar(1, 250, 5)
+
+        simulador.avanzarTick()
+
+        const metricas = simulador.getMetricas()
+        expect(metricas.getOcupacionMemoria()).toBe(25)
+        expect(metricas.getUtilizacionCpu()).toBe(100)
+        expect(metricas.getMemoriaLibreTotal()).toBe(750)
+    })
+
+
+    test("un tick con la cpu libre baja la utilizacion de cpu", () =>{
+        
+        const simulador = new Simulador(1000, 5, new FirstFit())
+        simulador.registrar(1, 250, 1)
+
+        simulador.avanzarTick()
+        simulador.avanzarTick()
+
+        expect(simulador.getMetricas().getUtilizacionCpu()).toBe(50)
+    })
+
+    test("round robin p1  cpu 3 y p2  cpu 2 con quantum 2 un cambio de contexto" , () =>{
+        
+        const simulador = new Simulador(1024, 2, new FirstFit())
+        
+        simulador.registrar(1, 100, 3)
+        
+        simulador.registrar(2, 100, 2)
+
+        simulador.avanzarTick()
+        simulador.avanzarTick()
+        simulador.avanzarTick()
+        simulador.avanzarTick()
+        simulador.avanzarTick()
+
+        expect(simulador.getMetricas().getCambiosdeContexto()).toBe(1)
+        
+        expect(simulador.getMetricas().getUtilizacionCpu()).toBe(100)
+    })
+
+
+    test("un bloqueo por entrada y salida cuenta un cambio de contexto", () =>{
+
+        const simulador = new Simulador(1024, 5, new FirstFit())
+        simulador.registrar(1, 100, 3, new EventoES(1, 2))
+
+        simulador.avanzarTick()
+
+        expect(simulador.getMetricas().getCambiosdeContexto()).toBe(1)
+    })
+
+
+    test("con la memoria llena la ocupacion es de 100% y la fragmentacion de 0", () =>{
+
+
+        const simulador = new Simulador(500, 5, new FirstFit())
+        
+        simulador.registrar(1, 500, 5)
+
+        simulador.avanzarTick()
+
+        expect(simulador.getMetricas().getOcupacionMemoria()).toBe(100)
+        
+        expect(simulador.getMetricas().getFragmentacionexterna()).toBe(0)
+    })
+
+
+})

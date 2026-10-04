@@ -7,6 +7,8 @@ import type { IProcesoConsulta } from "./IProcesoConsulta"
 import type { EventoES } from "./EventoES"
 import { Proceso } from "./Proceso"
 import { EstadodeProceso } from "./EstadodeProceso"
+import type { IMetricas } from "./IMetricas"
+import { Metricas } from "./Metricas"
 
 
 export class Simulador implements IConsultaSimulador {
@@ -15,6 +17,8 @@ export class Simulador implements IConsultaSimulador {
     private planificador: Planificador
     private tick: number 
     private procesos: Proceso[]
+    private tickscpuocupada: number
+    private metricas: Metricas
 
     constructor(memoriaTotal: number, quantum: number, politica: IPoliticadeAsignacion) {
 
@@ -22,6 +26,8 @@ export class Simulador implements IConsultaSimulador {
         this.planificador = new Planificador (quantum)
         this.tick = 0
         this.procesos = []
+        this.tickscpuocupada = 0
+        this.metricas = this.calcularMetricas()
 
     }
 
@@ -57,7 +63,24 @@ export class Simulador implements IConsultaSimulador {
         
         this.tick = this.tick + (this.esValido() ? 1:0)
 
+        this.metricas = this.calcularMetricas()
+
         return this.tick
+    }
+
+        getMetricas(): IMetricas {
+        return this.metricas
+    }
+
+        private calcularMetricas(): Metricas {
+        return new Metricas(
+            this.gestor.getMemoriaTotal(),
+            this.gestor.getMemorialibretotal(),
+            this.gestor.getMayorbloquelibres(),
+            this.tickscpuocupada,
+            this.tick,
+            this.planificador.getcambiosdecontexto()
+        )
     }
 
     esValido(): boolean {
@@ -85,6 +108,7 @@ export class Simulador implements IConsultaSimulador {
     private ejecutarCpu(): void {
         this.planificador.despachar()
         const corrio = this.planificador.ejecutarTick()
+                this.tickscpuocupada = this.tickscpuocupada + (corrio !== undefined ? 1 : 0)
         this.liberarsiTermino(corrio)
     }
 
