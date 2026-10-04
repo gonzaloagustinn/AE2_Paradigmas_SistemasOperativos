@@ -72,6 +72,8 @@ export class Simulador implements IConsultaSimulador {
         return this.planificador.getEjecutando()
     }
 
+    
+
     getListos(): ReadonlyArray<IProcesoConsulta> {
         return this.planificador.getColaListos()
          }
@@ -140,5 +142,25 @@ export class Simulador implements IConsultaSimulador {
         return proceso.avanzarBloqueo() && this.planificador.encolar(proceso)
      }
     
+    
+         getEsperandoMemoria(): ReadonlyArray<IProcesoConsulta> {
+        return this.filtrarPorEstado(EstadodeProceso.Esperando_Memoria)
+    }
+
+    getBloqueados(): ReadonlyArray<IProcesoConsulta> {
+        return this.filtrarPorEstado(EstadodeProceso.Bloqueado)
+    }
+
+    getTerminados(): ReadonlyArray<IProcesoConsulta> {
+        return this.filtrarPorEstado(EstadodeProceso.Terminado)
+      }
+ 
+    private filtrarPorEstado(estado: EstadodeProceso): IProcesoConsulta[] {
+        return this.procesos.filter(proceso => proceso.getEstado() === estado)
+    }
+
+    
 }
+
+
 

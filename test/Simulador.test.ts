@@ -8,6 +8,7 @@ import { EventoES } from "../src/EventoES"
 
 
 
+
 describe("configuracion y estado inicial", () => {
     test("la confguracion de referencia que es 1024kb con un quantum 2", () => {
         expect(new Simulador(1024, 2, new FirstFit()).esValido()).toBe(true)
@@ -508,10 +509,50 @@ describe("consulta del proceso en cpu y de los listos", () => {
         simulador.avanzarTick()
 
         expect(simulador.getProcesoEnCpu()).toBe(undefined)
-        
+
         expect(simulador.getListos()[0].getPid()).toBe(2)
 
 
         expect(simulador.getListos()[1].getPid()).toBe(1)
     })
 })
+
+describe("consulta de esperando, bloqueados y terminados", () =>{
+    test("informa los proceso esperando memoria", () =>{
+
+        const simulador = new Simulador(1000, 2, new FirstFit())
+
+        simulador.registrar(1, 800, 5)
+        simulador.registrar(2, 500, 5)
+
+
+        simulador.avanzarTick()
+
+
+        expect(simulador.getEsperandoMemoria().length).toBe(1)
+        expect(simulador.getEsperandoMemoria()[0].getPid()).toBe(2)
+    })
+
+    test("informa los proceso bloquados", () =>{
+
+    const simulador = new Simulador(1024, 5, new FirstFit())
+
+    simulador.registrar(1, 100, 3, new EventoES(1,2))
+
+    simulador.avanzarTick()
+
+    expect(simulador.getBloqueados().length).toBe(1)
+
+    expect(simulador.getBloqueados()[0].getPid()).toBe(1)
+    
+    expect(simulador.getListos().length).toBe(0)
+    
+    expect(simulador.getProcesoEnCpu()).toBe(undefined)
+
+    
+
+    })
+
+})
+
+

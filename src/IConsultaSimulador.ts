@@ -2,6 +2,7 @@ import type { BloquedeMemoria } from "./BloquedeMemoria"
 import type { IProcesoConsulta } from "./IProcesoConsulta"
 
 
+
 export interface IConsultaSimulador {
 
     getTick(): number
@@ -9,6 +10,12 @@ export interface IConsultaSimulador {
 
     getProcesoEnCpu(): IProcesoConsulta | undefined
     getListos(): ReadonlyArray<IProcesoConsulta>
+
+    getEsperandoMemoria(): ReadonlyArray<IProcesoConsulta>
+
+    getBloqueados(): ReadonlyArray<IProcesoConsulta>
+    
+    getTerminados(): ReadonlyArray<IProcesoConsulta>
 
 
 }
