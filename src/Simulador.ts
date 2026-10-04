@@ -6,6 +6,7 @@ import { Planificador } from "../src/Planificador"
 import type { IProcesoConsulta } from "./IProcesoConsulta"
 import type { EventoES } from "./EventoES"
 import { Proceso } from "./Proceso"
+import { EstadodeProceso } from "./EstadodeProceso"
 
 
 export class Simulador implements IConsultaSimulador {
@@ -49,6 +50,8 @@ export class Simulador implements IConsultaSimulador {
     }
 
     avanzarTick(): number {
+
+        this.admitirPendientes()
         this.tick = this.tick + (this.esValido() ? 1:0)
 
         return this.tick
@@ -56,5 +59,22 @@ export class Simulador implements IConsultaSimulador {
 
     esValido(): boolean {
         return this.gestor.esValido() && this.planificador.esValido()
+    }
+
+    private admitirPendientes(): void {
+        for (const proceso of this.procesos) {
+            const estado = proceso.getEstado()
+            const pendiente = estado ===EstadodeProceso.Nuevo || estado=== EstadodeProceso.Esperando_Memoria
+            const asignado = pendiente && this.gestor.asignar (proceso.getPid(), proceso.getMemoriaRequerida())
+            this.ubicar(proceso, pendiente, asignado)
+        }
+    }
+
+    private ubicar( proceso: Proceso, pendiente : boolean, asignado : boolean): boolean {
+        const admitido = asignado && proceso.admitir() && this.planificador.encolar(proceso)
+        const espera = pendiente && !asignado && proceso.esperarMemoria()
+        return admitido || espera
+
+        
     }
 }

@@ -152,3 +152,59 @@ describe("reloj",() => {
 
     })
 })
+
+
+describe("admision y asignacion de memoria", () => {
+    test("al avanzar el tick se asigna memoria a los proceso y quedan listos", () => {
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        simulador.registrar(1, 200, 5)
+        simulador.registrar(2, 200, 5)
+
+        simulador.avanzarTick()
+
+
+        const mapa = simulador.getMapadeMemoria()
+        expect(mapa.length).toBe(3)
+        expect(mapa[0].getPidAsignado()).toBe(1)
+        expect(mapa[1].getPidAsignado()).toBe(2)
+        expect(mapa[1].getInicio()).toBe(200)
+        expect(mapa[1].getTamano()).toBe(200)
+        expect(mapa[2].estaLibre()).toBe(true)
+        expect(mapa[2].getTamano()).toBe(624)
+        expect(simulador.getProcesos()[1].getEstado()).toBe(EstadodeProceso.Listo)
+
+    })
+
+    test("sin bloque suficiente el proceso queda esperando memoria", () => {
+        const simulador = new Simulador(1000, 2, new FirstFit())
+        simulador.registrar(1, 800, 5)
+        simulador.registrar(2, 500, 5)
+
+
+        simulador.avanzarTick()
+
+
+
+        expect(simulador.getProcesos()[1].getEstado()).toBe(EstadodeProceso.Esperando_Memoria)
+        expect(simulador.getMapadeMemoria().length).toBe(2)
+
+    })
+
+    test(" un proceso que entre en el espacio se admite unque otro anterior este esperando" , () => {
+
+        const simulador = new Simulador(1000, 2, new FirstFit())
+        simulador.registrar(1, 800, 5)
+        simulador.registrar(2, 500, 5)
+        simulador.registrar(3, 100, 5)
+
+        simulador.avanzarTick()
+
+
+        expect(simulador.getProcesos()[1].getEstado()).toBe(EstadodeProceso.Esperando_Memoria)
+
+        expect(simulador.getProcesos()[2].getEstado()).toBe(EstadodeProceso.Listo)
+        expect(simulador.getMapadeMemoria()[1].getPidAsignado()).toBe(3)
+
+    })
+})
