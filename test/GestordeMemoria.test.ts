@@ -169,3 +169,74 @@ describe("liberar", () => {
 
     })
 })
+
+describe("coalescencia", () => {
+
+    test("liberar une con el espacio libre de la izquierda", () => {
+        const gestor = new GestordeMemoria(1000, new FirstFit)
+        gestor.asignar(1, 200)
+        gestor.asignar(2, 100)
+        gestor.asignar(3, 100)
+        gestor.liberar(1)
+        gestor.liberar(2)
+
+        const bloques = gestor.getBloques()
+        expect(bloques.length).toBe(3)
+        expect(bloques[0].estaLibre()).toBe(true)
+        expect(bloques[0].getInicio()).toBe(0)
+        expect(bloques[0].getTamano()).toBe(300)
+        expect(bloques[1].getPidAsignado()).toBe(3)
+
+
+    })
+
+    test("liberar une con el espacio libre de la derecha", () =>{
+        const gestor = new GestordeMemoria(1000, new FirstFit)
+
+        gestor.asignar(1, 200)
+        gestor.asignar(2, 100)
+        gestor.liberar(2)
+
+        const bloques = gestor.getBloques()
+        expect(bloques.length).toBe(2)
+        expect(bloques[0].getPidAsignado()).toBe(1)
+        expect(bloques[1].estaLibre()).toBe(true)
+        expect(bloques[1].getInicio()).toBe(200)
+        expect(bloques[1].getTamano()).toBe(800)
+
+
+
+    })
+
+    test("liberar une une con los espacios libres de ambos lados", () =>{
+        
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+        gestor.asignar(1, 100)
+        gestor.asignar(2, 100)
+        gestor.asignar(3, 100)
+
+        gestor.liberar(1)
+        gestor.liberar(3)
+        gestor.liberar(2)
+
+        const bloques = gestor.getBloques()
+        expect(bloques.length).toBe(1)
+        expect(bloques[0].getInicio()).toBe(0)
+        expect(bloques[0].getTamano()).toBe(1000)
+
+    })
+
+    test("liberar un bloque entre ocupados no se una con nadie", () => {
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+
+        gestor.asignar(1, 100)
+        gestor.asignar(2, 200)
+        gestor.asignar(3, 100)
+        gestor.liberar(2)
+
+        const bloques = gestor.getBloques()
+        expect(bloques.length).toBe(4)
+        expect(bloques[1].estaLibre()).toBe(true)
+        expect(bloques[1].getTamano()).toBe(200)
+    })
+})
