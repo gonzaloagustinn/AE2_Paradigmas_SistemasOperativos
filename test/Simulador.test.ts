@@ -264,7 +264,7 @@ describe(" round robin con quantum 2", () => {
 
 describe("liberar memoria al terminar ", () => {
 
-    test("Al terminar, el proceso libera su memoria en ese mismo tick", () => {
+    test("al terminar el proceso libera su memoria en ese mismo tick", () => {
     
         const simulador = new Simulador(1024, 2, new FirstFit())
     
@@ -302,7 +302,7 @@ describe("liberar memoria al terminar ", () => {
         expect(p2.getCpuRestante()).toBe(1)
     })
 
-    test("Otro proceso no se ejecuta en el mismo tick en que otro termina", () => {
+    test("otro proceso no se ejecuta en el mismo tick en que otro termina", () => {
         
         const simulador = new Simulador(1024, 5, new FirstFit())
         
@@ -313,5 +313,7 @@ describe("liberar memoria al terminar ", () => {
         simulador.avanzarTick()
 
         expect(simulador.getProcesos()[1].getCpuRestante()).toBe(2)
+
+        
     })
 })
