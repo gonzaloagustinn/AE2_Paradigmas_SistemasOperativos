@@ -22,4 +22,5 @@ export class EventoES {
 
         return ticksValidos && duracionValida;
     }
+    
 }

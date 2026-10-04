@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest"
 import {EventoES} from "../src/EventoES"
 
+
 describe("EventoES", () => {
     test("guarda los ticks de cpu para dispararse y la duración", () =>{
 
@@ -68,6 +69,3 @@ describe("EventoES", () => {
 
     
 })
-
-
-
