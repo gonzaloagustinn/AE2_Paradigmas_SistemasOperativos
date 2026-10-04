@@ -4,7 +4,7 @@ import type { IMetricas } from "../src/IMetricas"
 
 function conMemoria(total: number, libre: number, mayorLibre: number): Metricas {
     
-    return new Metricas(total, libre, mayorLibre)
+    return new Metricas(total, libre, mayorLibre, 0, 0, 0)
 
 
 }
@@ -59,4 +59,32 @@ describe("metricas memoria", () => {
     })
 
 
+})
+
+describe("cpu y cambios de contrexto", ()=>{
+    test("utilizacion de cpu, 100 x ticks con cpu ocupada / ticks transcurridos", ()=>{
+    
+    expect(new Metricas(1000, 1000, 1000, 3, 4, 0).getUtilizacionCpu()).toBe(75)
+    
+    expect(new Metricas(1000, 1000, 1000, 4, 4, 0).getUtilizacionCpu()).toBe(100)
+    
+    expect(new Metricas(1000, 1000, 1000, 0, 4, 0).getUtilizacionCpu()).toBe(0)
+
+
+
+    })
+
+    test("en el tick 0 la utilizacion de la cpu es 0%", () =>{
+        expect(new Metricas(1000, 1000, 1000, 0, 0, 0).getUtilizacionCpu()).toBe(0)
+
+
+    })
+
+    test("los cambios de contexto se informan tal cual es", () =>{
+
+    
+    expect(new Metricas(1000, 1000, 1000, 1, 2, 3).getCambiosdeContexto()).toBe(3)
+
+
+    })
 })
