@@ -294,3 +294,19 @@ describe("cantidades de memoria", () => {
 
 
 })
+
+
+describe("proteccion del estaod interno", () => {
+    
+    test("devuelve una copia, no la lista interna",() => {
+
+        const gestor = new GestordeMemoria(1000, new FirstFit())
+
+        const primera = gestor.getBloques()
+        const segunda = gestor.getBloques()
+
+        expect(primera === segunda).toBe(false)
+        expect(primera.length).toBe(segunda.length)
+
+    })
+})

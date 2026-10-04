@@ -23,7 +23,7 @@ export class GestordeMemoria implements IConsultaMemoria, IGestordeMemoria {
     }
 
     getBloques(): ReadonlyArray<BloquedeMemoria> {
-        return this.bloques
+        return [...this.bloques]
     }
 
     asignar(pid: number, tamano: number): boolean {
