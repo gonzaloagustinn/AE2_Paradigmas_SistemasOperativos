@@ -261,3 +261,57 @@ describe(" round robin con quantum 2", () => {
 
     })
 })
+
+describe("liberar memoria al terminar ", () => {
+
+    test("Al terminar, el proceso libera su memoria en ese mismo tick", () => {
+    
+        const simulador = new Simulador(1024, 2, new FirstFit())
+    
+        simulador.registrar(1, 100, 1)
+
+        simulador.avanzarTick()
+
+    
+        expect(simulador.getProcesos()[0].getEstado()).toBe(EstadodeProceso.Terminado)
+    
+        expect(simulador.getMapadeMemoria().length).toBe(1)
+    
+        expect(simulador.getMapadeMemoria()[0].estaLibre()).toBe(true)
+        expect(simulador.getMapadeMemoria()[0].getTamano()).toBe(1024)
+    })
+
+    test("la memoria liberada se ofrece al proceso en espera en el tick siguiente", () => {
+        
+        const simulador = new Simulador(1000, 5, new FirstFit())
+        
+        
+        simulador.registrar(1, 800, 1)
+        
+        simulador.registrar(2, 500, 2)
+        const p2 = simulador.getProcesos()[1]
+
+        simulador.avanzarTick()
+        
+        expect(simulador.getProcesos()[0].getEstado()).toBe(EstadodeProceso.Terminado)
+        expect(p2.getEstado()).toBe(EstadodeProceso.Esperando_Memoria)
+
+        simulador.avanzarTick()
+        expect(p2.getEstado()).toBe(EstadodeProceso.Ejecutando)
+        
+        expect(p2.getCpuRestante()).toBe(1)
+    })
+
+    test("Otro proceso no se ejecuta en el mismo tick en que otro termina", () => {
+        
+        const simulador = new Simulador(1024, 5, new FirstFit())
+        
+        simulador.registrar(1, 100, 1)
+        
+        simulador.registrar(2, 100, 2)
+
+        simulador.avanzarTick()
+
+        expect(simulador.getProcesos()[1].getCpuRestante()).toBe(2)
+    })
+})

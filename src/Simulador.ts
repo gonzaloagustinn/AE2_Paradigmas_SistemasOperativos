@@ -79,9 +79,14 @@ export class Simulador implements IConsultaSimulador {
 
     }
 
+
     private ejecutarCpu(): void {
         this.planificador.despachar()
+        const corrio = this.planificador.ejecutarTick()
+        this.liberarSiTermino(corrio)
+    }
 
-        this.planificador.ejecutarTick()
+    private liberarSiTermino(proceso: Proceso | undefined): boolean {
+        return proceso !== undefined && proceso.getEstado() === EstadodeProceso.Terminado && this.gestor.liberar(proceso.getPid())
     }
 }
