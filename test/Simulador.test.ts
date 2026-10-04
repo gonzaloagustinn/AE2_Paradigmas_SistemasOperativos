@@ -70,6 +70,63 @@ describe(" registro de procesos", () => {
         expect( procesos.length).toBe(1)
         expect(procesos[0].getPid()).toBe(1)
         expect(procesos[0].getEstado()).toBe(EstadodeProceso.Nuevo)
-        
+
+    })
+
+    test("mantiene el orden de registro", () => {
+        const simulador = new Simulador(1024, 2, new FirstFit)
+
+        simulador.registrar(2, 100, 3)
+        simulador.registrar(1, 100, 3)
+
+        expect(simulador.getProcesos()[0].getPid()).toBe(2)
+        expect(simulador.getProcesos()[1].getPid()).toBe(1)
+    })
+
+    test("rechaza un pid repetido", () => {
+        const simulador = new Simulador (1024, 2, new FirstFit())
+        simulador.registrar(1, 100, 3)
+
+        expect(simulador.registrar(1, 200, 4)).toBe(false)
+        expect(simulador.getProcesos().length).toBe(1)
+
+    })
+
+    test("rechaza un proceso con datos invalidos", () => {
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        expect(simulador.registrar(0, 100, 3)).toBe(false)
+        expect(simulador.registrar(1, 0, 3)).toBe(false)
+        expect(simulador.registrar(1, 100, -3)).toBe(false)
+        expect(simulador.getProcesos().length).toBe(0)
+
+
+    })
+
+    test("con una configuracion invalida no se registra nada", () => {
+        const simulador = new Simulador(1024, 0, new FirstFit())
+        expect(simulador.registrar(1, 100, 3)).toBe(false)
+
+        expect(simulador.getProcesos().length).toBe(0)
+    })
+
+
+    test("un proceso con evento de entrada y salida valida se registra", () => {
+
+        const simulador = new Simulador(1024, 2, new FirstFit())
+
+        expect(simulador.registrar(1, 100, 5, new EventoES(2, 3))).toBe(true)
+
+    })
+
+
+    test("un proceso con evento de entrada y salida invalido se rechaza", () => {
+
+        const simulador = new Simulador (1024, 2, new FirstFit())
+
+        expect(simulador.registrar(1, 100, 5, new EventoES(0, 3))).toBe(false)
+
+        expect(simulador.registrar(1, 100, 5, new EventoES(2, -1))).toBe(false)
+
     })
 })
