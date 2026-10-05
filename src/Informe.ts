@@ -1,5 +1,6 @@
 import type { IConsultaSimulador } from "./IConsultaSimulador"
 import type { IProcesoConsulta } from "./IProcesoConsulta"
+import type { BloquedeMemoria } from "./BloquedeMemoria"
 
 export class Informe {
 
@@ -35,5 +36,19 @@ export class Informe {
     
     }
 
-
+    describirMemoria(): string {
+        
+        const bloques = this.simulador.getMapadeMemoria().map(bloque => this.describirBloque(bloque))
+        
+        return bloques.join("")
     }
+
+    private describirBloque(bloque: BloquedeMemoria): string {
+        
+        const nombre = bloque.estaLibre() ? "libre" : "P" + bloque.getPidAsignado()
+        const fin = bloque.getInicio() + bloque.getTamano() - 1
+        
+        return "[" + nombre + " " + bloque.getInicio() + "-" + fin + "]"
+    }
+
+}

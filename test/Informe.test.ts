@@ -69,3 +69,24 @@ describe("reporte de un tick", () => {
     })
 
 })
+
+describe("informe de la memoria", () => {
+    
+    test("al inicio la memoria es un unico bloque libre", () => {
+        
+        const informe = new Informe(new Simulador(1024, 2, new FirstFit()))
+        
+        expect(informe.describirMemoria()).toBe("[libre 0-1023]")
+    })
+
+    test("muestra el bloque ocupado y el libre", () => {
+        
+        const simulador = new Simulador(1024, 2, new FirstFit())
+        
+        simulador.registrar(1, 100, 3)
+        simulador.avanzarTick()
+        
+        const informe = new Informe(simulador)
+        expect(informe.describirMemoria()).toBe("[P1 0-99][libre 100-1023]")
+    })
+})
