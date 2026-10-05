@@ -90,3 +90,26 @@ describe("informe de la memoria", () => {
         expect(informe.describirMemoria()).toBe("[P1 0-99][libre 100-1023]")
     })
 })
+
+describe("reporte de las metricas", () => {
+    
+    test("al inicio todas las metricas estan en cero", () => {
+        
+        const simulador = new Simulador(1024, 2, new FirstFit())
+        const reporte = new Informe(simulador)
+        
+        expect(reporte.describirMetricas(simulador.getMetricas())).toBe("Ocupacion: 0.0% | CPU: 0.0% | Fragmentacion: 0.0% | Cambios de contexto: 0")
+    })
+
+    test("redondea los porcentajes a un decimal", () => {
+        
+        const simulador = new Simulador(1024, 2, new FirstFit())
+       
+        simulador.registrar(1, 100, 3)
+        simulador.avanzarTick()
+        
+        const reporte = new Informe(simulador)
+        
+        expect(reporte.describirMetricas(simulador.getMetricas())).toBe("Ocupacion: 9.8% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 0")
+    })
+})

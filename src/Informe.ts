@@ -1,6 +1,7 @@
 import type { IConsultaSimulador } from "./IConsultaSimulador"
 import type { IProcesoConsulta } from "./IProcesoConsulta"
 import type { BloquedeMemoria } from "./BloquedeMemoria"
+import type { IMetricas } from "./IMetricas"
 
 export class Informe {
 
@@ -51,4 +52,12 @@ export class Informe {
         return "[" + nombre + " " + bloque.getInicio() + "-" + fin + "]"
     }
 
+    describirMetricas(metricas: IMetricas): string {
+        
+        return "Ocupacion: " + metricas.getOcupacionMemoria().toFixed(1) + "%"
+        
+        + " | CPU: " + metricas.getUtilizacionCpu().toFixed(1) + "%"
+            + " | Fragmentacion: " + metricas.getFragmentacionexterna().toFixed(1) + "%"
+            + " | Cambios de contexto: " + metricas.getCambiosdeContexto()
+    }
 }
