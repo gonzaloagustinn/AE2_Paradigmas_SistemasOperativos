@@ -555,4 +555,83 @@ describe("consulta de esperando, bloqueados y terminados", () =>{
 
 })
 
+function hayDuplicados(pids: number[]): boolean {
+    let duplicado = false
+    for (let i = 0; i < pids.length; i++) {
+        for (let j = i + 1; j < pids.length; j++) {
+            duplicado = duplicado || pids[i] === pids[j]
+        }
+    }
+    return duplicado
+}
+
+function memoriaConsistente(simulador: Simulador, memoriaTotal: number): boolean {
+    let esperado = 0
+    let continua = true
+    for (const bloque of simulador.getMapadeMemoria()) {
+        continua = continua && bloque.getInicio() === esperado && bloque.getTamano() > 0
+        esperado = esperado + bloque.getTamano()
+    }
+    return continua && esperado === memoriaTotal
+}
+
+describe("invariantes durante toda la simulación"  , () =>{
+
+    
+    test("sin duplicados  sin solapamientos y con un solo proceso en cpu en cada tick", () => {
+        
+        
+        const simulador = new Simulador(1000, 2, new FirstFit())
+       
+        simulador.registrar(1, 300, 4, new EventoES(2, 2))
+        
+        simulador.registrar(2, 400, 3)
+        simulador.registrar(3, 500, 2)
+
+        simulador.registrar(4, 200, 3)
+
+        for (let tick = 0; tick < 20; tick++) {
+
+            simulador.avanzarTick()
+
+            const enColas: number[] = []
+           
+           
+            for (const proceso of simulador.getListos()) {
+                enColas.push(proceso.getPid())
+            }
+            
+            
+            for (const proceso of simulador.getBloqueados()) {
+
+                enColas.push(proceso.getPid())
+            }
+           
+           
+            for (const proceso of simulador.getEsperandoMemoria()) {
+                
+                enColas.push(proceso.getPid())
+            }
+            for (const proceso of simulador.getTerminados()) {
+
+
+                enColas.push(proceso.getPid())
+            }
+            const enCpu = simulador.getProcesoEnCpu()
+          
+            const todos = enCpu === undefined ? enColas : [...enColas, enCpu.getPid()]
+
+            expect(hayDuplicados(todos)).toBe(false)
+            
+            
+            expect(memoriaConsistente(simulador, 1000)).toBe(true)
+        }
+
+        expect(simulador.getTerminados().length).toBe(4)
+        expect(simulador.getMapadeMemoria().length).toBe(1)
+        
+        expect(simulador.getMapadeMemoria()[0].getTamano()).toBe(1000)
+    })
+})
+
 
