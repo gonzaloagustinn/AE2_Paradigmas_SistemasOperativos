@@ -148,3 +148,43 @@ describe("reporte del estado completo", () => {
 
 
 })
+
+describe("escenario completo", () => {
+    test("round robin, bloqueo por entrada y salida, espera y liberacion de memoria", () => {
+        const simulador = new Simulador(100, 2, new FirstFit())
+        simulador.registrar(1, 40, 3)
+        simulador.registrar(2, 30, 2, new EventoES(1, 2))
+        simulador.registrar(3, 50, 2)
+        const reporte = new Informe(simulador)
+
+        const estados: string[] = []
+        for (let tick = 1; tick <= 7; tick++) {
+            simulador.avanzarTick()
+            estados.push(reporte.describirEstado(simulador.getMetricas()))
+        }
+
+        expect(estados).toEqual([
+            "Tick 1 | CPU: P1 | Listos: P2 | Bloqueados: - | Espera memoria: P3\n"
+            + "Memoria: [P1 0-39][P2 40-69][libre 70-99]\n"
+            + "Ocupacion: 70.0% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 0",
+            "Tick 2 | CPU: - | Listos: P2,P1 | Bloqueados: - | Espera memoria: P3\n"
+            + "Memoria: [P1 0-39][P2 40-69][libre 70-99]\n"
+            + "Ocupacion: 70.0% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 1",
+            "Tick 3 | CPU: - | Listos: P1 | Bloqueados: P2 | Espera memoria: P3\n"
+            + "Memoria: [P1 0-39][P2 40-69][libre 70-99]\n"
+            + "Ocupacion: 70.0% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 2",
+            "Tick 4 | CPU: - | Listos: - | Bloqueados: P2 | Espera memoria: P3\n"
+            + "Memoria: [libre 0-39][P2 40-69][libre 70-99]\n"
+            + "Ocupacion: 30.0% | CPU: 100.0% | Fragmentacion: 42.9% | Cambios de contexto: 2",
+            "Tick 5 | CPU: - | Listos: - | Bloqueados: - | Espera memoria: P3\n"
+            + "Memoria: [libre 0-99]\n"
+            + "Ocupacion: 0.0% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 2",
+            "Tick 6 | CPU: P3 | Listos: - | Bloqueados: - | Espera memoria: -\n"
+            + "Memoria: [P3 0-49][libre 50-99]\n"
+            + "Ocupacion: 50.0% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 2",
+            "Tick 7 | CPU: - | Listos: - | Bloqueados: - | Espera memoria: -\n"
+            + "Memoria: [libre 0-99]\n"
+            + "Ocupacion: 0.0% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 2"
+        ])
+    })
+})
