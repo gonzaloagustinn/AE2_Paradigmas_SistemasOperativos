@@ -29,6 +29,10 @@ export class Informe {
         return "Tick " + this.simulador.getTick()
          + " | CPU: " + this.describirCpu()
          + " | Listos: " + this.describirCola(this.simulador.getListos())
+         + " | Bloqueados: " + this.describirCola(this.simulador.getBloqueados())
+         + " | Espera memoria: " + this.describirCola(this.simulador.getEsperandoMemoria())
+    
+    
     }
 
 
