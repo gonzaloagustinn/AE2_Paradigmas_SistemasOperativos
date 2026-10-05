@@ -60,4 +60,12 @@ export class Informe {
             + " | Fragmentacion: " + metricas.getFragmentacionexterna().toFixed(1) + "%"
             + " | Cambios de contexto: " + metricas.getCambiosdeContexto()
     }
+
+        describirEstado(metricas: IMetricas): string {
+        return this.describirTick() + "\n"
+            + "Memoria: " + this.describirMemoria() + "\n"
+            + this.describirMetricas(metricas)
+    }
+
+    
 }

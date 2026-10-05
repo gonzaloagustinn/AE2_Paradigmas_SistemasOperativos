@@ -113,3 +113,38 @@ describe("reporte de las metricas", () => {
         expect(reporte.describirMetricas(simulador.getMetricas())).toBe("Ocupacion: 9.8% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 0")
     })
 })
+
+describe("reporte del estado completo", () => {
+    test("al inicio muestra el tick, la memoria y las metricas en tres lineas", () => {
+        
+        const simulador = new Simulador(1024, 2, new FirstFit())
+        const reporte = new Informe(simulador)
+        
+        
+        expect(reporte.describirEstado(simulador.getMetricas())).toBe(
+        "Tick 0 | CPU: - | Listos: - | Bloqueados: - | Espera memoria: -\n"
+        + "Memoria: [libre 0-1023]\n"
+        + "Ocupacion: 0.0% | CPU: 0.0% | Fragmentacion: 0.0% | Cambios de contexto: 0")
+   
+   
+    })
+
+    test("muestra el estado despues de un tick con un proceso", () => {
+        
+        const simulador = new Simulador(1024, 2, new FirstFit())
+        
+        simulador.registrar(1, 100, 3)
+        simulador.avanzarTick()
+        
+        const reporte = new Informe(simulador)
+        
+        expect(reporte.describirEstado(simulador.getMetricas())).toBe(
+        "Tick 1 | CPU: P1 | Listos: - | Bloqueados: - | Espera memoria: -\n"
+        + "Memoria: [P1 0-99][libre 100-1023]\n"
+        + "Ocupacion: 9.8% | CPU: 100.0% | Fragmentacion: 0.0% | Cambios de contexto: 0")
+    
+    
+    })
+
+
+})
