@@ -1,5 +1,6 @@
 import { describe, test, expect } from "vitest"
 import {EventoES} from "../src/EventoES"
+import type { IEventoES } from "../src/IEventoES"
 
 
 describe("EventoES", () => {

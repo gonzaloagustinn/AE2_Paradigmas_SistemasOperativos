@@ -1,7 +1,7 @@
 import { EstadodeProceso } from "./EstadodeProceso";
 import type { IProcesoConsulta } from "./IProcesoConsulta";
 import { IProcesodeControl } from "./IProcesodecontrol";
-import { EventoES } from "./EventoES";
+import type { IEventoES } from "./IEventoES"
 
 export class Proceso implements IProcesoConsulta, IProcesodeControl {
     private readonly pid: number;
@@ -11,11 +11,11 @@ export class Proceso implements IProcesoConsulta, IProcesodeControl {
     private quantumConsumido: number
     private bloqueoRestante: number
     private estado: EstadodeProceso
-    private evento: EventoES | undefined
+    private evento: IEventoES | undefined
     
 
 
-        constructor(pid: number, memoriaRequerida: number, cpuTotal: number, evento?: EventoES)  {
+        constructor(pid: number, memoriaRequerida: number, cpuTotal: number, evento?: IEventoES)  {
         this.pid = pid;
         this.memoriaRequerida = memoriaRequerida;
         this.cpuTotal = cpuTotal;

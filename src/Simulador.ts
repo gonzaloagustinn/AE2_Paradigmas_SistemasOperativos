@@ -4,7 +4,7 @@ import type { BloquedeMemoria } from "../src/BloquedeMemoria"
 import { GestordeMemoria } from "../src/GestordeMemoria"
 import { Planificador } from "../src/Planificador"
 import type { IProcesoConsulta } from "./IProcesoConsulta"
-import type { EventoES } from "./EventoES"
+import type { IEventoES } from "./IEventoES"
 import { Proceso } from "./Proceso"
 import { EstadodeProceso } from "./EstadodeProceso"
 import type { IMetricas } from "./IMetricas"
@@ -44,7 +44,7 @@ export class Simulador implements IConsultaSimulador {
         return [...this.procesos]
     }
 
-    registrar(pid: number, MemoriaRequerida: number, cpuTotal: number, evento?: EventoES): boolean{
+    registrar(pid: number, MemoriaRequerida: number, cpuTotal: number, evento?: IEventoES): boolean{
 
         const proceso = new Proceso(pid, MemoriaRequerida, cpuTotal, evento)
         const duplicado = this.procesos.some(existente => existente.getPid() === pid)
