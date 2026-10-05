@@ -4,8 +4,23 @@ import { FirstFit } from "../src/FirstFit"
 import { Informe } from "../src/Informe" 
 
 describe("reporte de un tick", () => {
-    test("al inicio informa el tick 0", () => {
+    test("al inicio informa el tick 0 y la cpu libre", () => {
         const reporte = new Informe(new Simulador(1024, 2, new FirstFit()))
-        expect(reporte.describirTick()).toBe("Tick 0")
+
+        expect(reporte.describirTick()).toBe("Tick 0 | CPU: -")
+
     })
+
+    test("informa el proceso que esta en cpu", () => {
+       
+        const simulador = new Simulador(1024, 2, new FirstFit())
+        
+        simulador.registrar(1, 100, 3)
+        simulador.avanzarTick()
+        
+        const reporte = new Informe(simulador)
+       
+        expect(reporte.describirTick()).toBe("Tick 1 | CPU: P1")
+})
+
 })
