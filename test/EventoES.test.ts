@@ -62,10 +62,18 @@ describe("EventoES", () => {
         expect(new EventoES(2, NaN).esValido()).toBe(false);
     });
 
+ })
 
+        test("se puede usar a traves de la interfaz IEventoES", () => {
+        const evento: IEventoES = new EventoES(2, 3)
+
+        expect(evento.getTicksCpuParaDisparo()).toBe(2)
+        expect(evento.getDuracion()).toBe(3)
+        expect(evento.esValido()).toBe(true)
     })
 
     
 
     
 })
+
